@@ -1,4 +1,5 @@
 use aux5::{entry, prelude::*, Delay, Leds};
+use core::ops::Add;
 
 pub struct LedCounter<'a> {
     leds: &'a mut Leds,
@@ -21,15 +22,15 @@ impl<'a> LedCounter<'a> {
             255 => 0,
             _ => now + 1,
         };
+        let mut tmp = next;
         for i in 0..8 {
-            let change = (now ^ next) & (1 << i) != 0;
-            if change {
-                if next & (1 << i) != 0 {
-                    self.leds[i].on();
-                } else {
-                    self.leds[i].off();
-                }
+            let show = tmp & 0x01 == 1;
+            if show {
+                self.leds[i].on();
+            } else {
+                self.leds[i].off();
             }
+            tmp >>= 1;
         }
         self.counter = next;
     }

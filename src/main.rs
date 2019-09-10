@@ -11,7 +11,7 @@ fn main() -> ! {
     let (mut delay, mut leds): (Delay, Leds) = aux5::init();
 
     for _ in led_counter::LedCounter::new(&mut leds) {
-        delay.delay_ms(500u16);
+        delay.delay_ms(150u16);
     }
 
     loop {

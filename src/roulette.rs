@@ -1,8 +1,14 @@
+use core::iter::{Cycle, Skip};
+use core::ops::Range;
+
 use aux5::Leds;
+use cortex_m::asm::nop;
 
 pub struct Roulette<'a> {
     leds: &'a mut Leds,
-    state: u8,
+    is_on: bool,
+    on_counter: Cycle<Range<u8>>,
+    off_counter: Cycle<Range<u8>>,
 }
 
 impl<'a> Roulette<'a> {
@@ -10,9 +16,15 @@ impl<'a> Roulette<'a> {
         for led in leds.iter_mut() {
             led.off();
         }
+        let mut off_counter = (0..8).cycle();
+        for _ in 0..7 {
+            off_counter.next();
+        }
         Self {
             leds,
-            state: Default::default(),
+            is_on: true,
+            on_counter: (0..8).cycle(),
+            off_counter,
         }
     }
 }
@@ -21,61 +33,16 @@ impl<'a> Iterator for Roulette<'a> {
     type Item = ();
 
     fn next(&mut self) -> Option<Self::Item> {
-        match self.state {
-            0 => {
-                self.leds[0].on();
-                self.leds[1].on();
+        if self.is_on {
+            if let Some(index) = self.on_counter.next() {
+                self.leds[index as usize].on();
             }
-            1 => {
-                self.leds[0].off();
-            }
-            2 => {
-                self.leds[2].on();
-            }
-            3 => {
-                self.leds[1].off();
-            }
-            4 => {
-                self.leds[3].on();
-            }
-            5 => {
-                self.leds[2].off();
-            }
-            6 => {
-                self.leds[4].on();
-            }
-            7 => {
-                self.leds[3].off();
-            }
-            8 => {
-                self.leds[5].on();
-            }
-            9 => {
-                self.leds[4].off();
-            }
-            10 => {
-                self.leds[6].on();
-            }
-            11 => {
-                self.leds[5].off();
-            }
-            12 => {
-                self.leds[7].on();
-            }
-            13 => {
-                self.leds[6].off();
-            }
-            14 => {
-                self.leds[0].on();
-            }
-            _ => {
-                self.leds[7].off();
+        } else {
+            if let Some(index) = self.off_counter.next() {
+                self.leds[index as usize].off();
             }
         }
-        self.state = match self.state {
-            0..=14 => self.state + 1,
-            _ => 0
-        };
+        self.is_on = !self.is_on;
         Some(())
     }
 }

@@ -7,8 +7,8 @@ use cortex_m::asm::nop;
 pub struct Roulette<'a> {
     leds: &'a mut Leds,
     is_on: bool,
-    on_counter: Cycle<Range<u8>>,
-    off_counter: Cycle<Range<u8>>,
+    on_counter: Cycle<Range<usize>>,
+    off_counter: Cycle<Range<usize>>,
 }
 
 impl<'a> Roulette<'a> {
@@ -35,11 +35,11 @@ impl<'a> Iterator for Roulette<'a> {
     fn next(&mut self) -> Option<Self::Item> {
         if self.is_on {
             if let Some(index) = self.on_counter.next() {
-                self.leds[index as usize].on();
+                self.leds[index].on();
             }
         } else {
             if let Some(index) = self.off_counter.next() {
-                self.leds[index as usize].off();
+                self.leds[index].off();
             }
         }
         self.is_on = !self.is_on;

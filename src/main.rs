@@ -16,7 +16,7 @@ fn main() -> ! {
 //    }
 
     for _ in roulette::Roulette::new(&mut leds) {
-        delay.delay_ms(75u16);
+        delay.delay_ms(50u16);
     }
 
     loop {}

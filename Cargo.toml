@@ -10,19 +10,20 @@ cortex-m = "0.6.1"
 cortex-m-rt = "0.6.10"
 cortex-m-semihosting = "0.3.5"
 panic-halt = "0.2.0"
-aux5 = { path = "auxiliary" }
 
+[dependencies.stm32f4]
+version = "0.8.0"
+features = ["stm32f429", "rt"]
+
+[dependencies.stm32f4xx-hal]
+git = "https://github.com/stm32-rs/stm32f4xx-hal.git"
+features = ["stm32f429"]
 
 # Uncomment for the panic example.
 # panic-itm = "0.4.1"
 
 # Uncomment for the allocator example.
 # alloc-cortex-m = "0.3.5"
-
-# Uncomment for the device example.
-# [dependencies.stm32f3]
-# features = ["stm32f303", "rt"]
-# version = "0.7.1"
 
 # this lets you use `cargo fix`!
 [[bin]]

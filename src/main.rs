@@ -2,22 +2,35 @@
 #![no_main]
 #![no_std]
 
-use aux5::{Delay, entry, Leds, prelude::*};
+mod init;
 
-mod led_counter;
-mod roulette;
+use init::{entry, Delay};
+use stm32f4xx_hal::delay::*;
+use stm32f4xx_hal::prelude::*;
 
 #[entry]
 fn main() -> ! {
-    let (mut delay, mut leds): (Delay, Leds) = aux5::init();
+    let (mut delay, mut gpiog) = init::init();
 
-//    for _ in led_counter::LedCounter::new(&mut leds) {
-//        delay.delay_ms(75u16);
-//    }
-
-    for _ in roulette::Roulette::new(&mut leds) {
-        delay.delay_ms(50u16);
-    }
-
+    let duration = 1 * 50 as u32;
+    gpiog.moder.modify(|_, w| w.moder13().output());
+    gpiog.moder.modify(|_, w| w.moder14().output());
+    let mut i = 0u32;
+    let mut off_counter = (0..3).cycle();
+    for i in off_counter {
+        delay.delay_ms(duration);
+        match i {
+            0 => {
+                gpiog.odr.modify(|_, w| w.odr13().clear_bit());
+                gpiog.odr.modify(|_, w| w.odr14().clear_bit());
+            },
+            1 => {
+                gpiog.odr.modify(|_, w| w.odr13().set_bit());
+            },
+            _ => {
+                gpiog.odr.modify(|_, w| w.odr14().set_bit());
+            }
+        }
+    };
     loop {}
 }

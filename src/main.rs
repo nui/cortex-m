@@ -2,17 +2,16 @@
 #![no_main]
 #![no_std]
 
-mod init;
+mod aux;
 
-use init::{entry, Delay};
-use stm32f4xx_hal::delay::*;
+use aux::{entry, Delay};
 use stm32f4xx_hal::prelude::*;
 
 #[entry]
 fn main() -> ! {
-    let (mut delay, mut gpiog) = init::init();
+    let (mut delay, mut gpiog) = aux::init();
 
-    let duration = 1 * 50 as u32;
+    let duration = 1 * 1000 as u32;
     gpiog.moder.modify(|_, w| w.moder13().output());
     gpiog.moder.modify(|_, w| w.moder14().output());
     let mut i = 0u32;

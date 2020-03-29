@@ -11,7 +11,7 @@ use stm32f4xx_hal::prelude::*;
 fn main() -> ! {
     let (mut delay, mut gpiog) = aux::init();
 
-    let duration = 1 * 1000 as u32;
+    let duration = 1 * 200 as u32;
     gpiog.moder.modify(|_, w| w.moder13().output());
     gpiog.moder.modify(|_, w| w.moder14().output());
     let mut i = 0u32;
